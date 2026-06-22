@@ -52,6 +52,46 @@ Steps:
 
    <img width="588" height="139" alt="image" src="https://github.com/user-attachments/assets/42c89db3-118b-4e49-83cd-fdc4071be62b" />
 
+   ===================================
+
+   10. To build and publish the Requests Layer :
+
+       Notes:
+       `requests` is a pure-Python library (no native extensions), so it can be installed on any platform and will work in         Lambda without Docker.
+
+        Understanding the Layer ZIP Structure
+
+Lambda requires a **specific directory structure** inside the ZIP:
+
+```
+requests-layer.zip
+└── python/
+    └── lib/
+        └── python3.14/
+            └── site-packages/
+                ├── requests/
+                ├── urllib3/
+                ├── certifi/
+                └── charset_normalizer/
+```
+
+At runtime, Lambda extracts this to `/opt/` and adds `/opt/python` to `sys.path`. Python then finds packages under `/opt/python/lib/python3.14/site-packages/`.
+
+============================= 
+
+Step A — Build the Layer
+
+```bash
+cd /path/to/lambda-layers
+
+bash layers/requests-layer/build.sh
+```
+
+The script:
+1. Creates `build/requests-layer/python/lib/python3.14/site-packages/`
+2. Installs `requests` and its dependencies there with `pip`
+3. ZIPs the `python/` directory tree into `requests-layer.zip`
+
 
 
 
